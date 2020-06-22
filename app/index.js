@@ -16,48 +16,35 @@ const Popular = React.lazy(() => import('./comp/Popular'))
 const Battler = React.lazy(() => import('./comp/Battle'))
 const Results = React.lazy(() => import('./comp/Results'))
 
-
-// Contexties
-import { ThemeProvider } from './contexts/theme'
+import ThemeContext from './contexts/theme'
 
 // Styles
 import './index.css'
 
+function App() {
 
+    const [theme, setTheme] = React.useState('light')
+    const toggleTheme = () => setTheme((prevTheme) => prevTheme === 'light' ? 'dark' : 'light')
 
-
-class App extends React.Component {
-    state = {
-        theme: 'light',
-        toggleTheme: () => {
-            this.setState(({ theme }) => ({
-                theme: theme === 'dark' ? 'light' : 'dark'
-            }))
-        }
-    }
-
-    render () {
-
-        return (
-            <Router>
-                <ThemeProvider value={this.state}>
-                    <div className={this.state.theme}>
-                        <div className="container">
-                            <Nav />
-                            <React.Suspense fallback={<Loading />}>
-                                <Switch>
-                                    <Route exact path='/' component={Popular} />
-                                    <Route exact path='/battle' component={Battler} />
-                                    <Route path='/battle/results' component={Results} />
-                                    <Route component={PageNotFound} />
-                                </Switch>
-                            </React.Suspense>
-                        </div>
+    return (
+        <Router>
+            <ThemeContext.Provider value={{ theme, toggleTheme }}>
+                <div className={theme}>
+                    <div className="container">
+                        <Nav />
+                        <React.Suspense fallback={<Loading />}>
+                            <Switch>
+                                <Route exact path='/' component={Popular} />
+                                <Route exact path='/battle' component={Battler} />
+                                <Route path='/battle/results' component={Results} />
+                                <Route component={PageNotFound} />
+                            </Switch>
+                        </React.Suspense>
                     </div>
-                </ThemeProvider>
-            </Router>
-        )
-    }
+                </div>
+            </ThemeContext.Provider>
+        </Router>
+    )
 }
 
 const app = document.querySelector('#root')
